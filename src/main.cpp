@@ -1,5 +1,6 @@
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 #include <random>
 
 using namespace geode::prelude;
@@ -88,6 +89,14 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
 		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
+	}
+};
+
+class $modify(MyPlayLayer, PlayLayer) {
+	void loadFromCheckpoint(CheckpointObject* object) {
+		forcePassThrough = true;
+		PlayLayer::loadFromCheckpoint(object);
+		forcePassThrough = false;
 	}
 };
 
