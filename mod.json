@@ -1,29 +1,32 @@
 {
-	"geode": "4.9.0",
+	"geode": "4.10.2",
 	"gd": {
 		"win": "2.2074",
 		"mac": "2.2074",
 		"ios": "2.2074",
 		"android": "2.2074"
 	},
-	"id": "raydeeux.modname",
-	"name": "ModName",
+	"id": "raydeeux.randomgamemodeeverywhere",
+	"name": "RandomGamemodeEverywhere",
 	"version": "v1.0.0",
-	"developer": "RayDeeUx",
-	"description": "Mod description.",
-	"repository": "https://github.com/RayDeeUx/ModName",
+	"developers": ["RayDeeUx", "TheBearodactyl"],
+	"description": "Randomize gamemodes everywhere! Based on gimmicks pioneered by GD Quasar and popularized by KUKAA.",
 	"settings": {
 		"enabled": {
 			"name": "Enabled",
-			"description": "Toggles the mod.",
 			"type": "bool",
 			"default": true
+		},
+		"dontEnableInEditor": {
+			"name": "Don't Enable in Editor",
+			"type": "bool",
+			"default": true
+		},
+		"dontRandomizeInitialGamemode": {
+			"name": "Don't Randomize Initial Gamemode",
+			"type": "bool",
+			"default": false
 		}
-	},
-	"resources": {
-		"sprites": [
-			"resources/*.png"
-		]
 	},
 	"issues": {
 		"url": "https://discord.com/channels/911701438269386882/1205523212444639292",
