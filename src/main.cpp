@@ -1,6 +1,5 @@
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
-#include <Geode/modify/PlayLayer.hpp>
 #include <random>
 
 using namespace geode::prelude;
@@ -53,17 +52,25 @@ static bool baseSanityCheck(PlayerObject* self, GJBaseGameLayer* layer) {
 	return ret;
 }
 
+static bool isPracticeMode(GJBaseGameLayer* layer) {
+	return PlayLayer::get() && layer == PlayLayer::get() && PlayLayer::get()->m_isPracticeMode;
+}
+
 static bool shouldPassThrough(PlayerObject* self, GJBaseGameLayer* layer, GameObjectType mode, bool enablePortal) {
 	bool ret = false;
+	bool practiceMode = isPracticeMode(layer);
+	
 	if (!layer || !enabled || !self) ret = true;
 	else if (forcePassThrough) ret = true;
 	else if (self != layer->m_player1 && self != layer->m_player2) ret = true;
 	else if (layer->m_isEditor && dontEnableInEditor) ret = true;
+???
 
 	else if (self == layer->m_player1 && isRandomizingPlayerOne) ret = true;
 	else if (self == layer->m_player2 && isRandomizingPlayerTwo) ret = true;
+	else if (practiceMode) ret = true;
 
-	if (ret && enabled && layer && self && (!layer->m_isEditor || !dontEnableInEditor)) {
+	if (ret && enabled && layer && self && !practiceMode && (!layer->m_isEditor || !dontEnableInEditor)) {
 		if (!enablePortal) mode = GameObjectType::CubePortal;
 		layer->updateDualGround(self, static_cast<int>(mode), true, 0.5f);
 		if (randomizePlayerMirror) layer->toggleFlipped(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
@@ -98,21 +105,6 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
 		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
-	}
-};
-
-class $modify(MyPlayLayer, PlayLayer) {
-	struct Fields {
-		~Fields() {
-			isRandomizingPlayerOne = false;
-			isRandomizingPlayerTwo = false;
-			forcePassThrough = false;
-		}
-	};
-	void resetLevel() {
-		if (m_isPracticeMode) forcePassThrough = true;
-		PlayLayer::resetLevel();
-		if (m_isPracticeMode) forcePassThrough = false;
 	}
 };
 
