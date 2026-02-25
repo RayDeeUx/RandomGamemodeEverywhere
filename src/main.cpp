@@ -108,6 +108,11 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 };
 
 class $modify(MyPlayerObject, PlayerObject) {
+	void loadFromCheckpoint(PlayerCheckpoint* object) {
+		forcePassThrough = true;
+		PlayerObject::loadFromCheckpoint(object);
+		forcePassThrough = false;
+	}
 	void toggleBirdMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::UfoPortal, enable)) return PlayerObject::toggleBirdMode(enable, noEffects);
 		setRandomizing(this, m_gameLayer, true);
