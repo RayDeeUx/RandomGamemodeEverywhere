@@ -1,12 +1,13 @@
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 #include <random>
 
 using namespace geode::prelude;
 
 bool isRandomizingPlayerOne = false;
 bool isRandomizingPlayerTwo = false;
-bool forcePassThrough = true;
+bool forcePassThrough = false;
 
 bool enabled = true;
 bool dontEnableInEditor = true;
@@ -83,19 +84,35 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		~Fields() {
 			isRandomizingPlayerOne = false;
 			isRandomizingPlayerTwo = false;
+			forcePassThrough = false;
 		}
 	};
 
 	void resetPlayer() {
-		if (dontRandomizeInitialGamemode || (PlayLayer::get() && GJBaseGameLayer::get() && GJBaseGameLayer::get() == PlayLayer::get() && PlayLayer::get()->m_isPracticeMode)) forcePassThrough = true;
+		if (dontRandomizeInitialGamemode) forcePassThrough = true;
 		GJBaseGameLayer::resetPlayer();
-		if (dontRandomizeInitialGamemode || (PlayLayer::get() && GJBaseGameLayer::get() && GJBaseGameLayer::get() == PlayLayer::get() && PlayLayer::get()->m_isPracticeMode)) forcePassThrough = false;
+		if (dontRandomizeInitialGamemode) forcePassThrough = false;
 	}
 
 	void toggleDualMode(GameObject* object, bool dual, PlayerObject* player, bool noEffects) {
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
 		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
+	}
+};
+
+class $modify(MyPlayLayer, PlayLayer) {
+	struct Fields {
+		~Fields() {
+			isRandomizingPlayerOne = false;
+			isRandomizingPlayerTwo = false;
+			forcePassThrough = false;
+		}
+	};
+	void delayedResetLevel() {
+		if (m_isPracticeMode) forcePassThrough = true;
+		PlayLayer::delayedResetLevel();
+		if (m_isPracticeMode) forcePassThrough = false;
 	}
 };
 
