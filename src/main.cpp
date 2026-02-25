@@ -42,35 +42,6 @@ $on_game(Loaded) {
 	listenForSettingChanges<bool>("dontRandomizeInitialGamemode", [](const bool v) { dontRandomizeInitialGamemode = v; });
 }
 
-class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
-	struct Fields {
-		~Fields() {
-			isRandomizingPlayerOne = false;
-			isRandomizingPlayerTwo = false;
-		}
-	};
-
-	void resetPlayer() {
-		if (dontRandomizeInitialGamemode) forcePassThrough = true;
-		GJBaseGameLayer::resetPlayer();
-		if (dontRandomizeInitialGamemode) forcePassThrough = false;
-	}
-
-	void toggleDualMode(GameObject* object, bool dual, PlayerObject* player, bool noEffects) {
-		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
-		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
-		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
-	}
-
-	void toggleFlipped(bool enable, bool instant) {
-		GJBaseGameLayer::toggleFlipped(baseSanityCheck(m_player1, this) && randomizePlayerMirror ? static_cast<bool>(getRandom(1)) : enable, instant);
-	}
-
-	void flipGravity(PlayerObject* player, bool flip, bool noEffects) {
-		GJBaseGameLayer::toggleFlipped(baseSanityCheck(player, this) && randomizePlayerGravity ? static_cast<bool>(getRandom(1)) : flip, noEffects);
-	}
-};
-
 static bool baseSanityCheck(PlayerObject* self, GJBaseGameLayer* layer) {
 	bool ret = true;
 
@@ -103,6 +74,35 @@ static void setRandomizing(PlayerObject* self, GJBaseGameLayer* layer, bool valu
 	if (self == layer->m_player1) isRandomizingPlayerOne = value;
 	else if (self == layer->m_player2) isRandomizingPlayerTwo = value;
 }
+
+class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
+	struct Fields {
+		~Fields() {
+			isRandomizingPlayerOne = false;
+			isRandomizingPlayerTwo = false;
+		}
+	};
+
+	void resetPlayer() {
+		if (dontRandomizeInitialGamemode) forcePassThrough = true;
+		GJBaseGameLayer::resetPlayer();
+		if (dontRandomizeInitialGamemode) forcePassThrough = false;
+	}
+
+	void toggleDualMode(GameObject* object, bool dual, PlayerObject* player, bool noEffects) {
+		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
+		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
+		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
+	}
+
+	void toggleFlipped(bool enable, bool instant) {
+		GJBaseGameLayer::toggleFlipped(baseSanityCheck(m_player1, this) && randomizePlayerMirror ? static_cast<bool>(getRandom(1)) : enable, instant);
+	}
+
+	void flipGravity(PlayerObject* player, bool flip, bool noEffects) {
+		GJBaseGameLayer::toggleFlipped(baseSanityCheck(player, this) && randomizePlayerGravity ? static_cast<bool>(getRandom(1)) : flip, noEffects);
+	}
+};
 
 class $modify(MyPlayerObject, PlayerObject) {
 	void togglePlayerScale(bool enable, bool noEffects) {
