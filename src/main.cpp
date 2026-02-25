@@ -109,9 +109,9 @@ class $modify(MyPlayLayer, PlayLayer) {
 			forcePassThrough = false;
 		}
 	};
-	void delayedResetLevel() {
+	void resetLevel() {
 		if (m_isPracticeMode) forcePassThrough = true;
-		PlayLayer::delayedResetLevel();
+		PlayLayer::resetLevel();
 		if (m_isPracticeMode) forcePassThrough = false;
 	}
 };
