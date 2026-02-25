@@ -22,6 +22,26 @@
 			"type": "bool",
 			"default": true
 		},
+		"randomizePlayerSize": {
+			"name": "Randomize Player Size",
+			"type": "bool",
+			"default": false
+		},
+		"randomizePlayerGravity": {
+			"name": "Randomize Player Gravity",
+			"type": "bool",
+			"default": false
+		},
+		"randomizePlayerMirror": {
+			"name": "Randomize Player Mirror",
+			"type": "bool",
+			"default": false
+		},
+		"dontRandomizePlayerTwoWhenEnteringDual": {
+			"name": "Don't Randomize Player Two When Entering Dual",
+			"type": "bool",
+			"default": true
+		},
 		"dontRandomizeInitialGamemode": {
 			"name": "Don't Randomize Initial Gamemode",
 			"type": "bool",
