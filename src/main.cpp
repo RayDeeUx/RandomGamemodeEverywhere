@@ -87,9 +87,9 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 	};
 
 	void resetPlayer() {
-		if (dontRandomizeInitialGamemode || (this == PlayLayer::get() && static_cast<PlayLayer*>(this)->m_isPracticeMode)) forcePassThrough = true;
+		if (dontRandomizeInitialGamemode || (PlayLayer::get() && this == PlayLayer::get() && PlayLayer::get()->m_isPracticeMode)) forcePassThrough = true;
 		GJBaseGameLayer::resetPlayer();
-		if (dontRandomizeInitialGamemode || (this == PlayLayer::get() && static_cast<PlayLayer*>(this)->m_isPracticeMode)) forcePassThrough = false;
+		if (dontRandomizeInitialGamemode || (PlayLayer::get() && this == PlayLayer::get() && PlayLayer::get()->m_isPracticeMode)) forcePassThrough = false;
 	}
 
 	void toggleDualMode(GameObject* object, bool dual, PlayerObject* player, bool noEffects) {
