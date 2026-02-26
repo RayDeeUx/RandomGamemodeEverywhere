@@ -72,7 +72,7 @@ static bool shouldPassThrough(PlayerObject* self, GJBaseGameLayer* layer, GameOb
 			case GameObjectType::SpiderPortal: dummyObject->m_objectID = 1331;
 			case GameObjectType::SwingPortal: dummyObject->m_objectID = 1933;
 		}
-		layer->playerWillSwitchMode(self, dummyObject);
+		layer->updateCameraMode(self, dummyObject, false);
 	}
 
 	return ret;
