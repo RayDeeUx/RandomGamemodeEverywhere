@@ -18,11 +18,8 @@ bool dontRandomizePlayerTwoWhenEnteringDual = true;
 bool dontRandomizeInitialGamemode = true;
 
 int getRandom(int max) {
-	// replace with geode::utils::random::generate(0, max + 1);
-	std::random_device rd;
-	std::mt19937_64 gen(rd());
-	std::uniform_int_distribution<int> dist(0, max);
-	return dist(gen);
+    static std::mt19937 gen(std::random_device{}());
+    return std::uniform_int_distribution<int>(0, max)(gen);
 }
 
 static int getViewershipArousalLevelForEpisode(const int episodeNumber) {
