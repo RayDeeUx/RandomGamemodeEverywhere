@@ -1,342 +1,283 @@
-#include <Geode/modify/GJBaseGameLayer.hpp>
-#include <Geode/modify/PlayerObject.hpp>
-#include <Geode/modify/PlayLayer.hpp>
+#include <array>
 #include <random>
+
+#include <Geode/modify/GJBaseGameLayer.hpp>
+#include <Geode/modify/PlayLayer.hpp>
+#include <Geode/modify/PlayerObject.hpp>
 
 using namespace geode::prelude;
 
-bool isRandomizingPlayerOne = false;
-bool isRandomizingPlayerTwo = false;
-bool forcePassThrough = false;
+struct Settings {
+  bool enabled = true;
+  bool dontEnableInEditor = true;
+  bool randomizePlayerSize = false;
+  bool randomizePlayerGravity = false;
+  bool randomizePlayerMirror = false;
+  bool dontRandomizePlayerTwoWhenEnteringDual = true;
+  bool dontRandomizeInitialGamemode = true;
+} static s_settings;
 
-bool enabled = true;
-bool dontEnableInEditor = true;
-bool randomizePlayerSize = false;
-bool randomizePlayerGravity = false;
-bool randomizePlayerMirror = false;
-bool dontRandomizePlayerTwoWhenEnteringDual = true;
-bool dontRandomizeInitialGamemode = true;
+$execute {
+  auto *mod = Mod::get();
 
-int getRandom(int max) {
-    static std::mt19937 gen(std::random_device{}());
-    return std::uniform_int_distribution<int>(0, max)(gen);
+  s_settings.enabled = mod->getSettingValue<bool>("enabled");
+  s_settings.dontEnableInEditor =
+      mod->getSettingValue<bool>("dontEnableInEditor");
+  s_settings.randomizePlayerSize =
+      mod->getSettingValue<bool>("randomizePlayerSize");
+  s_settings.randomizePlayerGravity =
+      mod->getSettingValue<bool>("randomizePlayerGravity");
+  s_settings.randomizePlayerMirror =
+      mod->getSettingValue<bool>("randomizePlayerMirror");
+  s_settings.dontRandomizePlayerTwoWhenEnteringDual =
+      mod->getSettingValue<bool>("dontRandomizePlayerTwoWhenEnteringDual");
+  s_settings.dontRandomizeInitialGamemode =
+      mod->getSettingValue<bool>("dontRandomizeInitialGamemode");
+
+  listenForSettingChanges<bool>("enabled",
+                                [](bool v) { s_settings.enabled = v; });
+  listenForSettingChanges<bool>(
+      "dontEnableInEditor", [](bool v) { s_settings.dontEnableInEditor = v; });
+  listenForSettingChanges<bool>("randomizePlayerSize", [](bool v) {
+    s_settings.randomizePlayerSize = v;
+  });
+  listenForSettingChanges<bool>("randomizePlayerGravity", [](bool v) {
+    s_settings.randomizePlayerGravity = v;
+  });
+  listenForSettingChanges<bool>("randomizePlayerMirror", [](bool v) {
+    s_settings.randomizePlayerMirror = v;
+  });
+  listenForSettingChanges<bool>(
+      "dontRandomizePlayerTwoWhenEnteringDual",
+      [](bool v) { s_settings.dontRandomizePlayerTwoWhenEnteringDual = v; });
+  listenForSettingChanges<bool>("dontRandomizeInitialGamemode", [](bool v) {
+    s_settings.dontRandomizeInitialGamemode = v;
+  });
 }
 
-static int getViewershipArousalLevelForEpisode(const int episodeNumber) {
-    switch (episodeNumber) {
-        default: return INT16_MAX;
-        case 13: return INT_MAX;
+static bool s_randomizingP1 = false;
+static bool s_randomizingP2 = false;
+static bool s_forcePassThrough = false;
+
+static int getRandom(int max) {
+  static std::mt19937 gen(std::random_device{}());
+  return std::uniform_int_distribution<int>(0, max)(gen);
+}
+
+struct ModeEntry {
+  GameObjectType portalType;
+  void (*apply)(PlayerObject *pl, bool enable, bool noEffects);
+};
+
+static const std::array<ModeEntry, 7> k_modes = {{
+    {GameObjectType::UfoPortal,
+     [](PlayerObject *p, bool e, bool n) {
+       p->PlayerObject::toggleBirdMode(e, n);
+     }},
+    {GameObjectType::WavePortal,
+     [](PlayerObject *p, bool e, bool n) {
+       p->PlayerObject::toggleDartMode(e, n);
+     }},
+    {GameObjectType::ShipPortal,
+     [](PlayerObject *p, bool e, bool n) {
+       p->PlayerObject::toggleFlyMode(e, n);
+     }},
+    {GameObjectType::RobotPortal,
+     [](PlayerObject *p, bool e, bool n) {
+       p->PlayerObject::toggleRobotMode(e, n);
+     }},
+    {GameObjectType::BallPortal,
+     [](PlayerObject *p, bool e, bool n) {
+       p->PlayerObject::toggleRollMode(e, n);
+     }},
+    {GameObjectType::SpiderPortal,
+     [](PlayerObject *p, bool e, bool n) {
+       p->PlayerObject::toggleSpiderMode(e, n);
+     }},
+    {GameObjectType::SwingPortal,
+     [](PlayerObject *p, bool e, bool n) {
+       p->PlayerObject::toggleSwingMode(e, n);
+     }},
+}};
+
+static bool shouldPassThrough(PlayerObject *self, GJBaseGameLayer *layer) {
+  return s_forcePassThrough || !s_settings.enabled || !layer || !self ||
+         (self != layer->m_player1 && self != layer->m_player2) ||
+         (layer->m_isEditor && s_settings.dontEnableInEditor) ||
+         (self == layer->m_player1 && s_randomizingP1) ||
+         (self == layer->m_player2 && s_randomizingP2);
+}
+
+static void setRandomizing(PlayerObject *self, GJBaseGameLayer *layer,
+                           bool value) {
+  if (self == layer->m_player1) {
+    s_randomizingP1 = value;
+  } else if (self == layer->m_player2) {
+    s_randomizingP2 = value;
+  }
+}
+
+class FrameDefer : public CCNode {
+  std::function<void()> m_callback;
+
+public:
+  static FrameDefer *schedule(CCNode *parent, std::function<void()> callback) {
+    auto *node = new FrameDefer();
+    node->m_callback = std::move(callback);
+    node->autorelease();
+    node->scheduleOnce(schedule_selector(FrameDefer::fire), 0.f);
+    parent->addChild(node);
+    return node;
+  }
+
+  void fire(float) {
+    m_callback();
+    removeFromParent();
+  }
+};
+
+static void scheduleGroundAnimation(PlayerObject *self, GJBaseGameLayer *layer,
+                                    GameObjectType pickedMode) {
+  FrameDefer::schedule(layer, [layer, self, pickedMode]() {
+    const bool isPractice =
+        !layer->m_isEditor && static_cast<PlayLayer *>(layer)->m_isPracticeMode;
+
+    if (!isPractice) {
+      if (s_settings.randomizePlayerMirror) {
+        layer->toggleFlipped(getRandom(1), getRandom(1));
+      }
+      if (s_settings.randomizePlayerGravity) {
+        layer->flipGravity(self, getRandom(1), getRandom(1));
+      }
+      if (s_settings.randomizePlayerSize) {
+        self->togglePlayerScale(getRandom(1), getRandom(1));
+      }
     }
+
+    const int modeInt = static_cast<int>(pickedMode);
+    layer->updateDualGround(self, modeInt, false, 0.5f);
+
+    const bool needsDualGround = pickedMode != GameObjectType::CubePortal &&
+                                 pickedMode != GameObjectType::RobotPortal;
+
+    if (needsDualGround && layer->m_gameState.m_lastActivatedPortal1) {
+      layer->animateInDualGroundNew(layer->m_gameState.m_lastActivatedPortal1,
+                                    layer->getGroundHeight(self, modeInt),
+                                    false, 0.5f);
+    }
+  });
 }
 
-$on_game(Loaded) {
-	enabled = Mod::get()->getSettingValue<bool>("enabled");
-	dontEnableInEditor = Mod::get()->getSettingValue<bool>("dontEnableInEditor");
-	randomizePlayerSize = Mod::get()->getSettingValue<bool>("randomizePlayerSize");
-	randomizePlayerGravity = Mod::get()->getSettingValue<bool>("randomizePlayerGravity");
-	randomizePlayerMirror = Mod::get()->getSettingValue<bool>("randomizePlayerMirror");
-	dontRandomizePlayerTwoWhenEnteringDual = Mod::get()->getSettingValue<bool>("dontRandomizePlayerTwoWhenEnteringDual");
-	dontRandomizeInitialGamemode = Mod::get()->getSettingValue<bool>("dontRandomizeInitialGamemode");
+static void randomizeAndApply(PlayerObject *self, GJBaseGameLayer *layer,
+                              int incomingModeIndex, bool noEffects) {
+  setRandomizing(self, layer, true);
+  const int pick = getRandom(7);
 
-	listenForSettingChanges<bool>("enabled", [](const bool v) { enabled = v; });
-	listenForSettingChanges<bool>("dontEnableInEditor", [](const bool v) { dontEnableInEditor = v; });
-	listenForSettingChanges<bool>("randomizePlayerSize", [](const bool v) { randomizePlayerSize = v; });
-	listenForSettingChanges<bool>("randomizePlayerGravity", [](const bool v) { randomizePlayerGravity = v; });
-	listenForSettingChanges<bool>("randomizePlayerMirror", [](const bool v) { randomizePlayerMirror = v; });
-	listenForSettingChanges<bool>("dontRandomizePlayerTwoWhenEnteringDual", [](const bool v) { dontRandomizePlayerTwoWhenEnteringDual = v; });
-	listenForSettingChanges<bool>("dontRandomizeInitialGamemode", [](const bool v) { dontRandomizeInitialGamemode = v; });
-}
+  GameObjectType picked;
 
-static bool shouldPassThrough(PlayerObject* self, GJBaseGameLayer* layer, GameObjectType mode, bool enablePortal) {
-	bool ret = false;
+  if (pick == 0) {
+    k_modes[incomingModeIndex].apply(self, false, noEffects);
+    picked = GameObjectType::CubePortal;
+  } else {
+    const auto &mode = k_modes[pick - 1];
+    mode.apply(self, true, noEffects);
+    picked = mode.portalType;
+  }
 
-	int arousal = getViewershipArousalLevelForEpisode(1);
-	
-	if (!layer || !enabled || !self) ret = true;
-	else if (forcePassThrough) ret = true;
-	else if (self != layer->m_player1 && self != layer->m_player2) ret = true;
-	else if (layer->m_isEditor && dontEnableInEditor) ret = true;
-
-	else if (self == layer->m_player1 && isRandomizingPlayerOne) ret = true;
-	else if (self == layer->m_player2 && isRandomizingPlayerTwo) ret = true;
-
-	if (!ret && enabled && layer && self && (!layer->m_isEditor || !dontEnableInEditor)) {
-		if (!enablePortal) mode = GameObjectType::CubePortal;
-		layer->updateDualGround(self, static_cast<int>(mode), false, 0.5f);
-		const bool shouldRandomize = ((!layer->m_isEditor && !static_cast<PlayLayer*>(layer)->m_isPracticeMode) || layer->m_isEditor);
-		if (randomizePlayerMirror && shouldRandomize) layer->toggleFlipped(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
-		if (randomizePlayerGravity && shouldRandomize) layer->flipGravity(self, static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
-		if (randomizePlayerSize && shouldRandomize) self->togglePlayerScale(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
-		if (layer->m_gameState.m_lastActivatedPortal1 && mode != GameObjectType::CubePortal && mode != GameObjectType::RobotPortal) layer->animateInDualGroundNew(layer->m_gameState.m_lastActivatedPortal1, layer->getGroundHeight(self, static_cast<int>(mode)), false, .5f);
-	}
-
-	return ret;
-}
-
-static void setRandomizing(PlayerObject* self, GJBaseGameLayer* layer, bool value) {
-	int arousal = getViewershipArousalLevelForEpisode(1);
-	if (self == layer->m_player1) isRandomizingPlayerOne = value;
-	else if (self == layer->m_player2) isRandomizingPlayerTwo = value;
+  setRandomizing(self, layer, false);
+  scheduleGroundAnimation(self, layer, picked);
 }
 
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
-	struct Fields {
-		~Fields() {
-			isRandomizingPlayerOne = false;
-			isRandomizingPlayerTwo = false;
-			forcePassThrough = false;
-		}
-	};
+  struct Fields {
+    ~Fields() {
+      s_randomizingP1 = false;
+      s_randomizingP2 = false;
+      s_forcePassThrough = false;
+    }
+  };
 
-	void resetPlayer() {
-		if (dontRandomizeInitialGamemode) forcePassThrough = true;
-		GJBaseGameLayer::resetPlayer();
-		if (dontRandomizeInitialGamemode) forcePassThrough = false;
-	}
+  void resetPlayer() {
+    if (s_settings.dontRandomizeInitialGamemode) {
+      s_forcePassThrough = true;
+    }
 
-	void toggleDualMode(GameObject* object, bool dual, PlayerObject* player, bool noEffects) {
-		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
-		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
-		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
-	}
+    GJBaseGameLayer::resetPlayer();
+    s_forcePassThrough = false;
+  }
+
+  void toggleDualMode(GameObject *object, bool dual, PlayerObject *player,
+                      bool noEffects) {
+    if (s_settings.dontRandomizePlayerTwoWhenEnteringDual) {
+      s_forcePassThrough = true;
+    }
+
+    GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
+    s_forcePassThrough = false;
+  }
 };
 
 class $modify(MyPlayLayer, PlayLayer) {
-	void loadFromCheckpoint(CheckpointObject* object) {
-		forcePassThrough = true;
-		PlayLayer::loadFromCheckpoint(object);
-		forcePassThrough = false;
-	}
+  void loadFromCheckpoint(CheckpointObject *object) {
+    s_forcePassThrough = true;
+    PlayLayer::loadFromCheckpoint(object);
+    s_forcePassThrough = false;
+  }
 };
 
 class $modify(MyPlayerObject, PlayerObject) {
-	void loadFromCheckpoint(PlayerCheckpoint* object) {
-		forcePassThrough = true;
-		PlayerObject::loadFromCheckpoint(object);
-		forcePassThrough = false;
-	}
-	void toggleBirdMode(bool enable, bool noEffects) {
-		if (shouldPassThrough(this, m_gameLayer, GameObjectType::UfoPortal, enable)) return PlayerObject::toggleBirdMode(enable, noEffects);
-		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
-		switch (r) {
-			default:
-				PlayerObject::toggleBirdMode(true, noEffects);
-				break;
-			case 0:
-				PlayerObject::toggleBirdMode(false, noEffects);
-				break;
-			case 1:
-				PlayerObject::toggleDartMode(true, noEffects);
-				break;
-			case 2:
-				PlayerObject::toggleFlyMode(true, noEffects);
-				break;
-			case 3:
-				PlayerObject::toggleRobotMode(true, noEffects);
-				break;
-			case 4:
-				PlayerObject::toggleRollMode(true, noEffects);
-				break;
-			case 5:
-				PlayerObject::toggleSpiderMode(true, noEffects);
-				break;
-			case 6:
-				PlayerObject::toggleSwingMode(true, noEffects);
-				break;
-		}
-		setRandomizing(this, m_gameLayer, false);
-	}
-	void toggleDartMode(bool enable, bool noEffects) {
-		if (shouldPassThrough(this, m_gameLayer, GameObjectType::WavePortal, enable)) return PlayerObject::toggleDartMode(enable, noEffects);
-		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
-		switch (r) {
-			default:
-				PlayerObject::toggleDartMode(true, noEffects);
-				break;
-			case 0:
-				PlayerObject::toggleDartMode(false, noEffects);
-				break;
-			case 1:
-				PlayerObject::toggleBirdMode(true, noEffects);
-				break;
-			case 2:
-				PlayerObject::toggleFlyMode(true, noEffects);
-				break;
-			case 3:
-				PlayerObject::toggleRobotMode(true, noEffects);
-				break;
-			case 4:
-				PlayerObject::toggleRollMode(true, noEffects);
-				break;
-			case 5:
-				PlayerObject::toggleSpiderMode(true, noEffects);
-				break;
-			case 6:
-				PlayerObject::toggleSwingMode(true, noEffects);
-				break;
-		}
-		setRandomizing(this, m_gameLayer, false);
-	}
-	void toggleFlyMode(bool enable, bool noEffects) {
-		if (shouldPassThrough(this, m_gameLayer, GameObjectType::ShipPortal, enable)) return PlayerObject::toggleFlyMode(enable, noEffects);
-		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
-		switch (r) {
-			default:
-				PlayerObject::toggleFlyMode(true, noEffects);
-				break;
-			case 0:
-				PlayerObject::toggleFlyMode(false, noEffects);
-				break;
-			case 1:
-				PlayerObject::toggleDartMode(true, noEffects);
-				break;
-			case 2:
-				PlayerObject::toggleBirdMode(true, noEffects);
-				break;
-			case 3:
-				PlayerObject::toggleRobotMode(true, noEffects);
-				break;
-			case 4:
-				PlayerObject::toggleRollMode(true, noEffects);
-				break;
-			case 5:
-				PlayerObject::toggleSpiderMode(true, noEffects);
-				break;
-			case 6:
-				PlayerObject::toggleSwingMode(true, noEffects);
-				break;
-		}
-		setRandomizing(this, m_gameLayer, false);
-	}
-	void toggleRobotMode(bool enable, bool noEffects) {
-		if (shouldPassThrough(this, m_gameLayer, GameObjectType::RobotPortal, enable)) return PlayerObject::toggleRobotMode(enable, noEffects);
-		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
-		switch (r) {
-			default:
-				PlayerObject::toggleRobotMode(true, noEffects);
-				break;
-			case 0:
-				PlayerObject::toggleRobotMode(false, noEffects);
-				break;
-			case 1:
-				PlayerObject::toggleBirdMode(true, noEffects);
-				break;
-			case 2:
-				PlayerObject::toggleFlyMode(true, noEffects);
-				break;
-			case 3:
-				PlayerObject::toggleDartMode(true, noEffects);
-				break;
-			case 4:
-				PlayerObject::toggleRollMode(true, noEffects);
-				break;
-			case 5:
-				PlayerObject::toggleSpiderMode(true, noEffects);
-				break;
-			case 6:
-				PlayerObject::toggleSwingMode(true, noEffects);
-				break;
-		}
-		setRandomizing(this, m_gameLayer, false);
-	}
-	void toggleRollMode(bool enable, bool noEffects) {
-		if (shouldPassThrough(this, m_gameLayer, GameObjectType::BallPortal, enable)) return PlayerObject::toggleRollMode(enable, noEffects);
-		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
-		switch (r) {
-			default:
-				PlayerObject::toggleRollMode(true, noEffects);
-				break;
-			case 0:
-				PlayerObject::toggleRollMode(false, noEffects);
-				break;
-			case 1:
-				PlayerObject::toggleBirdMode(true, noEffects);
-				break;
-			case 2:
-				PlayerObject::toggleFlyMode(true, noEffects);
-				break;
-			case 3:
-				PlayerObject::toggleRobotMode(true, noEffects);
-				break;
-			case 4:
-				PlayerObject::toggleDartMode(true, noEffects);
-				break;
-			case 5:
-				PlayerObject::toggleSpiderMode(true, noEffects);
-				break;
-			case 6:
-				PlayerObject::toggleSwingMode(true, noEffects);
-				break;
-		}
-		setRandomizing(this, m_gameLayer, false);
-	}
-	void toggleSpiderMode(bool enable, bool noEffects) {
-		if (shouldPassThrough(this, m_gameLayer, GameObjectType::SpiderPortal, enable)) return PlayerObject::toggleSpiderMode(enable, noEffects);
-		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
-		switch (r) {
-			default:
-				PlayerObject::toggleSpiderMode(true, noEffects);
-				break;
-			case 0:
-				PlayerObject::toggleSpiderMode(false, noEffects);
-				break;
-			case 1:
-				PlayerObject::toggleDartMode(true, noEffects);
-				break;
-			case 2:
-				PlayerObject::toggleBirdMode(true, noEffects);
-				break;
-			case 3:
-				PlayerObject::toggleRobotMode(true, noEffects);
-				break;
-			case 4:
-				PlayerObject::toggleRollMode(true, noEffects);
-				break;
-			case 5:
-				PlayerObject::toggleFlyMode(true, noEffects);
-				break;
-			case 6:
-				PlayerObject::toggleSwingMode(true, noEffects);
-				break;
-		}
-		setRandomizing(this, m_gameLayer, false);
-	}
-	void toggleSwingMode(bool enable, bool noEffects) {
-		if (shouldPassThrough(this, m_gameLayer, GameObjectType::SwingPortal, enable)) return PlayerObject::toggleSwingMode(enable, noEffects);
-		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
-		switch (r) {
-			default:
-				PlayerObject::toggleSwingMode(true, noEffects);
-				break;
-			case 0:
-				PlayerObject::toggleSwingMode(false, noEffects);
-				break;
-			case 1:
-				PlayerObject::toggleBirdMode(true, noEffects);
-				break;
-			case 2:
-				PlayerObject::toggleFlyMode(true, noEffects);
-				break;
-			case 3:
-				PlayerObject::toggleDartMode(true, noEffects);
-				break;
-			case 4:
-				PlayerObject::toggleRollMode(true, noEffects);
-				break;
-			case 5:
-				PlayerObject::toggleSpiderMode(true, noEffects);
-				break;
-			case 6:
-				PlayerObject::toggleRobotMode(true, noEffects);
-				break;
-		}
-		setRandomizing(this, m_gameLayer, false);
-	}
+  void loadFromCheckpoint(PlayerCheckpoint *object) {
+    s_forcePassThrough = true;
+    PlayerObject::loadFromCheckpoint(object);
+    s_forcePassThrough = false;
+  }
+
+  void toggleBirdMode(bool e, bool n) {
+    if (shouldPassThrough(this, m_gameLayer)) {
+      return PlayerObject::toggleBirdMode(e, n);
+    }
+    randomizeAndApply(this, m_gameLayer, 0, n);
+  }
+
+  void toggleDartMode(bool e, bool n) {
+    if (shouldPassThrough(this, m_gameLayer)) {
+      return PlayerObject::toggleDartMode(e, n);
+    }
+    randomizeAndApply(this, m_gameLayer, 1, n);
+  }
+
+  void toggleFlyMode(bool e, bool n) {
+    if (shouldPassThrough(this, m_gameLayer)) {
+      return PlayerObject::toggleFlyMode(e, n);
+    }
+    randomizeAndApply(this, m_gameLayer, 2, n);
+  }
+
+  void toggleRobotMode(bool e, bool n) {
+    if (shouldPassThrough(this, m_gameLayer)) {
+      return PlayerObject::toggleRobotMode(e, n);
+    }
+    randomizeAndApply(this, m_gameLayer, 3, n);
+  }
+
+  void toggleRollMode(bool e, bool n) {
+    if (shouldPassThrough(this, m_gameLayer)) {
+      return PlayerObject::toggleRollMode(e, n);
+    }
+    randomizeAndApply(this, m_gameLayer, 4, n);
+  }
+
+  void toggleSpiderMode(bool e, bool n) {
+    if (shouldPassThrough(this, m_gameLayer)) {
+      return PlayerObject::toggleSpiderMode(e, n);
+    }
+    randomizeAndApply(this, m_gameLayer, 5, n);
+  }
+
+  void toggleSwingMode(bool e, bool n) {
+    if (shouldPassThrough(this, m_gameLayer)) {
+      return PlayerObject::toggleSwingMode(e, n);
+    }
+    randomizeAndApply(this, m_gameLayer, 6, n);
+  }
 };
