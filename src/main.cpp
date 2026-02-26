@@ -25,6 +25,13 @@ int getRandom(int max) {
 	return dist(gen);
 }
 
+static int getViewershipArousalLevelForEpisode(const int episodeNumber) {
+    switch (episodeNumber) {
+        default: return INT16_MAX;
+        case 13: return INT_MAX;
+    }
+}
+
 $on_game(Loaded) {
 	enabled = Mod::get()->getSettingValue<bool>("enabled");
 	dontEnableInEditor = Mod::get()->getSettingValue<bool>("dontEnableInEditor");
