@@ -8,7 +8,7 @@
 	},
 	"id": "raydeeux.randomgamemodeeverywhere",
 	"name": "RandomGamemodeEverywhere",
-	"version": "v1.0.0",
+	"version": "v0.0.1-beta.1",
 	"developers": ["RayDeeUx", "TheBearodactyl"],
 	"description": "Randomize gamemodes everywhere! Based on gimmicks pioneered by GD Quasar and popularized by KUKAA.",
 	"settings": {
@@ -45,7 +45,7 @@
 		"dontRandomizeInitialGamemode": {
 			"name": "Don't Randomize Initial Gamemode",
 			"type": "bool",
-			"default": false
+			"default": true
 		}
 	},
 	"tags": [

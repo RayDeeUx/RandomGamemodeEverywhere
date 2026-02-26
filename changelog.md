@@ -1,3 +1,3 @@
 # RandomGamemodeEverywhere Changelog
-## v1.0.0
+## v0.0.1-beta.1
 - Initial release (on GitHub).
