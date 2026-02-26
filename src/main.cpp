@@ -61,20 +61,18 @@ static bool shouldPassThrough(PlayerObject* self, GJBaseGameLayer* layer, GameOb
 		if (randomizePlayerMirror && shouldRandomize) layer->toggleFlipped(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
 		if (randomizePlayerGravity && shouldRandomize) layer->flipGravity(self, static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
 		if (randomizePlayerSize && shouldRandomize) self->togglePlayerScale(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
-		if (lastActivatedPortal1) {
-			GameObject* dummyObject = new GameObject(*lastActivatedPortal1);
-			switch (mode) {
-				default: dummyObject->m_objectID = 12;
-				case GameObjectType::ShipPortal: dummyObject->m_objectID = 13;
-				case GameObjectType::BallPortal: dummyObject->m_objectID = 47;
-				case GameObjectType::UfoPortal: dummyObject->m_objectID = 111;
-				case GameObjectType::WavePortal: dummyObject->m_objectID = 660;
-				case GameObjectType::RobotPortal: dummyObject->m_objectID = 745;
-				case GameObjectType::SpiderPortal: dummyObject->m_objectID = 1331;
-				case GameObjectType::SwingPortal: dummyObject->m_objectID = 1933;
-			}
-			layer->playerWillSwitchMode(self, dummyObject);
+		GameObject* dummyObject = new GameObject();
+		switch (mode) {
+			default: dummyObject->m_objectID = 12;
+			case GameObjectType::ShipPortal: dummyObject->m_objectID = 13;
+			case GameObjectType::BallPortal: dummyObject->m_objectID = 47;
+			case GameObjectType::UfoPortal: dummyObject->m_objectID = 111;
+			case GameObjectType::WavePortal: dummyObject->m_objectID = 660;
+			case GameObjectType::RobotPortal: dummyObject->m_objectID = 745;
+			case GameObjectType::SpiderPortal: dummyObject->m_objectID = 1331;
+			case GameObjectType::SwingPortal: dummyObject->m_objectID = 1933;
 		}
+		layer->playerWillSwitchMode(self, dummyObject);
 	}
 
 	return ret;
