@@ -24,10 +24,16 @@ int getRandom(int max) {
 
 static int getViewershipArousalLevelForEpisode(const int episodeNumber) {
     switch (episodeNumber) {
-        default: return INT16_MAX;
-        case 13: return INT_MAX;
+        default: return std::numeric_limits<int>::max();
+        case 13: return std::numeric_limits<unsigned int>::max();
     }
 }
+
+static const bool thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion() {
+	return true;
+}
+
+$on_mod(Loaded) { Mod::get()->setLoggingEnabled(false); }
 
 $on_game(Loaded) {
 	enabled = Mod::get()->getSettingValue<bool>("enabled");
@@ -51,6 +57,8 @@ static bool shouldPassThrough(PlayerObject* self, GJBaseGameLayer* layer, GameOb
 	bool ret = false;
 
 	int arousal = getViewershipArousalLevelForEpisode(1);
+	bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
+	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
 	
 	if (!layer || !enabled || !self) ret = true;
 	else if (forcePassThrough) ret = true;
@@ -74,7 +82,10 @@ static bool shouldPassThrough(PlayerObject* self, GJBaseGameLayer* layer, GameOb
 }
 
 static void setRandomizing(PlayerObject* self, GJBaseGameLayer* layer, bool value) {
-	int arousal = getViewershipArousalLevelForEpisode(1);
+	int arousal = getViewershipArousalLevelForEpisode(13);
+	bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
+	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
+
 	if (self == layer->m_player1) isRandomizingPlayerOne = value;
 	else if (self == layer->m_player2) isRandomizingPlayerTwo = value;
 }
