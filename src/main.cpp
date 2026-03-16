@@ -167,7 +167,9 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (!m_isBird && !forcePassThrough) PlayerObject::toggleBirdMode(true, noEffects);
+				if (m_isBird) const float originalVelocity = this->m_yVelocity;
+				PlayerObject::toggleBirdMode(true, noEffects);
+				if (m_isBird) this->setYVelocity(originalVelocity);
 				break;
 			case 0:
 				PlayerObject::toggleBirdMode(false, noEffects);
@@ -199,7 +201,9 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (!m_isDart && !forcePassThrough) PlayerObject::toggleDartMode(true, noEffects);
+				if (m_isDart) const float originalVelocity = this->m_yVelocity;
+				PlayerObject::toggleDartMode(true, noEffects);
+				if (m_isDart) this->setYVelocity(originalVelocity);
 				break;
 			case 0:
 				PlayerObject::toggleDartMode(false, noEffects);
@@ -231,7 +235,9 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (!m_isShip && !forcePassThrough) PlayerObject::toggleFlyMode(true, noEffects);
+				if (m_isShip) const float originalVelocity = this->m_yVelocity;
+				PlayerObject::toggleFlyMode(true, noEffects);
+				if (m_isShip) this->setYVelocity(originalVelocity);
 				break;
 			case 0:
 				PlayerObject::toggleFlyMode(false, noEffects);
@@ -263,7 +269,9 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (!m_isRobot && !forcePassThrough) PlayerObject::toggleRobotMode(true, noEffects);
+				if (m_isRobot) const float originalVelocity = this->m_yVelocity;
+				PlayerObject::toggleRobotMode(true, noEffects);
+				if (m_isRobot) this->setYVelocity(originalVelocity);
 				break;
 			case 0:
 				PlayerObject::toggleRobotMode(false, noEffects);
@@ -295,7 +303,9 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (!m_isBall && !forcePassThrough) PlayerObject::toggleRollMode(true, noEffects);
+				if (m_isBall) const float originalVelocity = this->m_yVelocity;
+				PlayerObject::toggleRollMode(true, noEffects);
+				if (m_isBall) this->setYVelocity(originalVelocity);
 				break;
 			case 0:
 				PlayerObject::toggleRollMode(false, noEffects);
@@ -327,7 +337,9 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (!m_isSpider && !forcePassThrough) PlayerObject::toggleSpiderMode(true, noEffects);
+				if (m_isSpider) const float originalVelocity = this->m_yVelocity;
+				PlayerObject::toggleSpiderMode(true, noEffects);
+				if (m_isSpider) this->setYVelocity(originalVelocity);
 				break;
 			case 0:
 				PlayerObject::toggleSpiderMode(false, noEffects);
@@ -359,7 +371,9 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (!m_isSwing && !forcePassThrough) PlayerObject::toggleSwingMode(true, noEffects);
+				if (m_isSwing) const float originalVelocity = this->m_yVelocity;
+				PlayerObject::toggleSwingMode(true, noEffects);
+				if (m_isSwing) this->setYVelocity(originalVelocity);
 				break;
 			case 0:
 				PlayerObject::toggleSwingMode(false, noEffects);
