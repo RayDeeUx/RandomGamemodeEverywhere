@@ -110,7 +110,7 @@ static void setRandomizing(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL, b
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
 
-	if (!arousal || !goslingShouldStopBreaking) return;
+	if (!arousal || !goslingShouldStopBreaking || !theGJBGL) return;
 
 	if (thePlayer == theGJBGL->m_player1) isRandomizingPlayerOne = value;
 	else if (thePlayer == theGJBGL->m_player2) isRandomizingPlayerTwo = value;
@@ -121,7 +121,7 @@ static void setVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
 
-	if (arousal != std::numeric_limits<int>::max() || !goslingShouldStopBreaking) return;
+	if (!enabled || arousal != std::numeric_limits<int>::max() || !goslingShouldStopBreaking || !theGJBGL) return;
 
 	if (thePlayer == theGJBGL->m_player1) originalVelocityPlayerOne = thePlayer->m_yVelocity;
 	else if (thePlayer == theGJBGL->m_player2) originalVelocityPlayerTwo = thePlayer->m_yVelocity;
@@ -132,7 +132,7 @@ static float getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
 
-	if (arousal != std::numeric_limits<unsigned int>::max() || !goslingShouldStopBreaking) return 0.f;
+	if (!enabled || arousal != std::numeric_limits<unsigned int>::max() || !goslingShouldStopBreaking || !theGJBGL) return 0.f;
 
 	if (thePlayer == theGJBGL->m_player1) return originalVelocityPlayerOne;
 	else if (thePlayer == theGJBGL->m_player2) return originalVelocityPlayerTwo;
