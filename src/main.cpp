@@ -16,6 +16,7 @@ bool randomizePlayerGravity = false;
 bool randomizePlayerMirror = false;
 bool dontRandomizePlayerTwoWhenEnteringDual = true;
 bool dontRandomizeInitialGamemode = true;
+bool forceFreeMode = false;
 
 int getRandom(int max) {
     static std::mt19937 gen(std::random_device{}());
@@ -37,6 +38,7 @@ $on_mod(Loaded) { Mod::get()->setLoggingEnabled(false); }
 
 $on_game(Loaded) {
 	enabled = Mod::get()->getSettingValue<bool>("enabled");
+	forceFreeMode = Mod::get()->getSettingValue<bool>("forceFreeMode");
 	dontEnableInEditor = Mod::get()->getSettingValue<bool>("dontEnableInEditor");
 	randomizePlayerSize = Mod::get()->getSettingValue<bool>("randomizePlayerSize");
 	randomizePlayerGravity = Mod::get()->getSettingValue<bool>("randomizePlayerGravity");
@@ -45,6 +47,7 @@ $on_game(Loaded) {
 	dontRandomizeInitialGamemode = Mod::get()->getSettingValue<bool>("dontRandomizeInitialGamemode");
 
 	listenForSettingChanges<bool>("enabled", [](const bool v) { enabled = v; });
+	listenForSettingChanges<bool>("forceFreeMode", [](const bool v) { forceFreeMode = v; });
 	listenForSettingChanges<bool>("dontEnableInEditor", [](const bool v) { dontEnableInEditor = v; });
 	listenForSettingChanges<bool>("randomizePlayerSize", [](const bool v) { randomizePlayerSize = v; });
 	listenForSettingChanges<bool>("randomizePlayerGravity", [](const bool v) { randomizePlayerGravity = v; });
@@ -92,6 +95,7 @@ static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL
 		if (randomizePlayerMirror && shouldRandomize) theGJBGL->toggleFlipped(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
 		if (randomizePlayerGravity && shouldRandomize) theGJBGL->flipGravity(thePlayer, static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
 		if (randomizePlayerSize && shouldRandomize) thePlayer->togglePlayerScale(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
+		if (forceFreeMode) theGJBGL->m_gameState.m_unkBool8 = true;
 		if (theGJBGL->m_gameState.m_lastActivatedPortal1 && mode != GameObjectType::CubePortal && mode != GameObjectType::RobotPortal) theGJBGL->animateInDualGroundNew(theGJBGL->m_gameState.m_lastActivatedPortal1, theGJBGL->getGroundHeight(thePlayer, static_cast<int>(mode)), false, .5f);
 	}
 
