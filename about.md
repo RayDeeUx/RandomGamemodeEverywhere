@@ -3,7 +3,7 @@ Randomize gamemodes everywhere!
 
 Based on level gimmicks pioneered by GD Quasar and popularized by KUAAA and the Globed mod.
 
-## <co>***THIS MOD IS CURRENTLY IN __BETA__. There __CAN AND WILL BE__ bugs at the moment, especially with __the level's ground heights being broken.__ Do __NOT__ report these bugs, as there have already been attempts to fix them without much success. Enabling  `Force Free Mode`  is your second best bet.***</c>
+## <co>***THIS MOD IS CURRENTLY IN __BETA__. There __CAN AND WILL BE__ bugs at the moment, especially with __the level's ground heights being broken.__ Do __NOT__ report these bugs, as there have already been attempts to fix them without much success. As such,  `Force Free Mode`  is enabled by default.***</c>
 
 Huge thanks to [TheBearodactyl](https://github.com/TheBearodactyl) for debugging my accidental infinite recursion. Thanks to [hiimjasmine00](https://github.com/hiimjasmine00) for finding some much-needed function calls.
 

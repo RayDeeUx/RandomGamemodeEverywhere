@@ -37,6 +37,11 @@
 			"type": "bool",
 			"default": false
 		},
+		"forceFreeMode": {
+			"name": "Force Free Mode",
+			"type": "bool",
+			"default": true
+		},
 		"dontRandomizePlayerTwoWhenEnteringDual": {
 			"name": "Don't Randomize Player Two When Entering Dual",
 			"type": "bool",
@@ -46,11 +51,6 @@
 			"name": "Don't Randomize Initial Gamemode",
 			"type": "bool",
 			"default": true
-		},
-		"forceFreeMode": {
-			"name": "Force Free Mode",
-			"type": "bool",
-			"default": false
 		}
 	},
 	"tags": [
