@@ -101,6 +101,18 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		}
 	};
 
+	void setupLevelStart(LevelSettingsObject* settings) {
+		if (dontRandomizeInitialGamemode) forcePassThrough = true;
+		GJBaseGameLayer::setupLevelStart(settings);
+		if (dontRandomizeInitialGamemode) forcePassThrough = false;
+	}
+
+	void loadStartPosObject() {
+		if (dontRandomizeInitialGamemode) forcePassThrough = true;
+		GJBaseGameLayer::loadStartPosObject();
+		if (dontRandomizeInitialGamemode) forcePassThrough = false;
+	}
+
 	void resetPlayer() {
 		if (dontRandomizeInitialGamemode) forcePassThrough = true;
 		GJBaseGameLayer::resetPlayer();
