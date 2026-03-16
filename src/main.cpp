@@ -110,7 +110,7 @@ static void setRandomizing(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL, b
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
 
-	if (!arousal || !goslingShouldStopBreaking || !theGJBGL) return;
+	if (!enabled || !arousal || !goslingShouldStopBreaking || !theGJBGL) return;
 
 	if (thePlayer == theGJBGL->m_player1) isRandomizingPlayerOne = value;
 	else if (thePlayer == theGJBGL->m_player2) isRandomizingPlayerTwo = value;
