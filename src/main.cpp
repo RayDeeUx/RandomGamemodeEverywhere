@@ -67,8 +67,11 @@ static bool isSameGamemode(PlayerObject* thePlayer, GameObjectType mode, bool en
 }
 
 static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL, GameObjectType mode, bool enablePortal) {
+	if (isSameGamemode(thePlayer, mode, enablePortal)) {
+		return true;
+	}
+
 	bool ret = false;
-	bool isSameGamemodeVar = false;
 
 	const bool arousal = getViewershipArousalLevelForEpisode(1) == std::numeric_limits<int>::max();
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
@@ -78,10 +81,6 @@ static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL
 	else if (forcePassThrough) ret = true;
 	else if (thePlayer != theGJBGL->m_player1 && thePlayer != theGJBGL->m_player2) ret = true;
 	else if (theGJBGL->m_isEditor && dontEnableInEditor) ret = true;
-	else if (isSameGamemode(thePlayer, mode, enablePortal)) {
-		ret = true;
-		isSameGamemodeVar = true;
-	}
 
 	else if (thePlayer == theGJBGL->m_player1 && isRandomizingPlayerOne) ret = true;
 	else if (thePlayer == theGJBGL->m_player2 && isRandomizingPlayerTwo) ret = true;
