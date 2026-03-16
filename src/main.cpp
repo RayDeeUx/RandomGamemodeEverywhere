@@ -96,7 +96,7 @@ static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL
 		if (randomizePlayerGravity && shouldRandomize) theGJBGL->flipGravity(thePlayer, static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
 		if (randomizePlayerSize && shouldRandomize) thePlayer->togglePlayerScale(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
 		if (forceFreeMode) theGJBGL->m_gameState.m_unkBool8 = true;
-		if (theGJBGL->m_gameState.m_lastActivatedPortal1 && mode != GameObjectType::CubePortal && mode != GameObjectType::RobotPortal) theGJBGL->animateInDualGroundNew(theGJBGL->m_gameState.m_lastActivatedPortal1, theGJBGL->getGroundHeight(thePlayer, static_cast<int>(mode)), false, .5f);
+		else if (theGJBGL->m_gameState.m_lastActivatedPortal1 && mode != GameObjectType::CubePortal && mode != GameObjectType::RobotPortal) theGJBGL->animateInDualGroundNew(theGJBGL->m_gameState.m_lastActivatedPortal1, theGJBGL->getGroundHeight(thePlayer, static_cast<int>(mode)), false, .5f);
 	}
 
 	return ret;
