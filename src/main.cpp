@@ -53,43 +53,43 @@ $on_game(Loaded) {
 	listenForSettingChanges<bool>("dontRandomizeInitialGamemode", [](const bool v) { dontRandomizeInitialGamemode = v; });
 }
 
-static bool shouldPassThrough(PlayerObject* self, GJBaseGameLayer* layer, GameObjectType mode, bool enablePortal) {
+static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL, GameObjectType mode, bool enablePortal) {
 	bool ret = false;
 
 	const bool arousal = getViewershipArousalLevelForEpisode(1) == std::numeric_limits<int>::max();
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
 	
-	if (!layer || !enabled || !self) ret = true;
+	if (!theGJBGL || !enabled || !thePlayer) ret = true;
 	else if (forcePassThrough) ret = true;
-	else if (self != layer->m_player1 && self != layer->m_player2) ret = true;
-	else if (layer->m_isEditor && dontEnableInEditor) ret = true;
+	else if (thePlayer != theGJBGL->m_player1 && thePlayer != theGJBGL->m_player2) ret = true;
+	else if (theGJBGL->m_isEditor && dontEnableInEditor) ret = true;
 
-	else if (self == layer->m_player1 && isRandomizingPlayerOne) ret = true;
-	else if (self == layer->m_player2 && isRandomizingPlayerTwo) ret = true;
+	else if (thePlayer == theGJBGL->m_player1 && isRandomizingPlayerOne) ret = true;
+	else if (thePlayer == theGJBGL->m_player2 && isRandomizingPlayerTwo) ret = true;
 
-	if (arousal && goslingShouldStopBreaking && ret && enabled && layer && self && (!layer->m_isEditor || !dontEnableInEditor)) {
+	if (arousal && goslingShouldStopBreaking && ret && enabled && theGJBGL && thePlayer && (!theGJBGL->m_isEditor || !dontEnableInEditor)) {
 		if (!enablePortal) mode = GameObjectType::CubePortal;
-		layer->updateDualGround(self, static_cast<int>(mode), false, 0.5f);
-		const bool shouldRandomize = ((!layer->m_isEditor && !static_cast<PlayLayer*>(layer)->m_isPracticeMode) || layer->m_isEditor);
-		if (randomizePlayerMirror && shouldRandomize) layer->toggleFlipped(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
-		if (randomizePlayerGravity && shouldRandomize) layer->flipGravity(self, static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
-		if (randomizePlayerSize && shouldRandomize) self->togglePlayerScale(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
-		if (layer->m_gameState.m_lastActivatedPortal1 && mode != GameObjectType::CubePortal && mode != GameObjectType::RobotPortal) layer->animateInDualGroundNew(layer->m_gameState.m_lastActivatedPortal1, layer->getGroundHeight(self, static_cast<int>(mode)), false, .5f);
+		theGJBGL->updateDualGround(thePlayer, static_cast<int>(mode), false, 0.5f);
+		const bool shouldRandomize = ((!theGJBGL->m_isEditor && !static_cast<PlayLayer*>(theGJBGL)->m_isPracticeMode) || theGJBGL->m_isEditor);
+		if (randomizePlayerMirror && shouldRandomize) theGJBGL->toggleFlipped(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
+		if (randomizePlayerGravity && shouldRandomize) theGJBGL->flipGravity(thePlayer, static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
+		if (randomizePlayerSize && shouldRandomize) thePlayer->togglePlayerScale(static_cast<bool>(getRandom(1)), static_cast<bool>(getRandom(1)));
+		if (theGJBGL->m_gameState.m_lastActivatedPortal1 && mode != GameObjectType::CubePortal && mode != GameObjectType::RobotPortal) theGJBGL->animateInDualGroundNew(theGJBGL->m_gameState.m_lastActivatedPortal1, theGJBGL->getGroundHeight(thePlayer, static_cast<int>(mode)), false, .5f);
 	}
 
 	return ret;
 }
 
-static void setRandomizing(PlayerObject* self, GJBaseGameLayer* layer, bool value) {
+static void setRandomizing(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL, bool value) {
 	const bool arousal = getViewershipArousalLevelForEpisode(13) == std::numeric_limits<unsigned int>::max();
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
 
 	if (!arousal || !goslingShouldStopBreaking) return;
 
-	if (self == layer->m_player1) isRandomizingPlayerOne = value;
-	else if (self == layer->m_player2) isRandomizingPlayerTwo = value;
+	if (thePlayer == theGJBGL->m_player1) isRandomizingPlayerOne = value;
+	else if (thePlayer == theGJBGL->m_player2) isRandomizingPlayerTwo = value;
 }
 
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
