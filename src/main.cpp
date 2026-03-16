@@ -18,18 +18,19 @@ bool dontRandomizePlayerTwoWhenEnteringDual = true;
 bool dontRandomizeInitialGamemode = true;
 bool forceFreeMode = false;
 
-float originalVelocity = 0.f;
+float originalVelocityPlayerOne = 0.f;
+float originalVelocityPlayerTwo = 0.f;
 
 int getRandom(int max) {
-    static std::mt19937 gen(std::random_device{}());
-    return std::uniform_int_distribution<int>(0, max)(gen);
+	static std::mt19937 gen(std::random_device{}());
+	return std::uniform_int_distribution<int>(0, max)(gen);
 }
 
 static int getViewershipArousalLevelForEpisode(const int episodeNumber) {
-    switch (episodeNumber) {
-        default: return std::numeric_limits<int>::max();
-        case 13: return std::numeric_limits<unsigned int>::max();
-    }
+	switch (episodeNumber) {
+		default: return std::numeric_limits<int>::max();
+		case 13: return std::numeric_limits<unsigned int>::max();
+	}
 }
 
 static const bool thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion() {
@@ -115,12 +116,37 @@ static void setRandomizing(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL, b
 	else if (thePlayer == theGJBGL->m_player2) isRandomizingPlayerTwo = value;
 }
 
+static void setVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
+	const int arousal = getViewershipArousalLevelForEpisode(1);
+	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
+	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
+
+	if (arousal != std::numeric_limits<int>::max() || !goslingShouldStopBreaking) return;
+
+	if (thePlayer == theGJBGL->m_player1) originalVelocityPlayerOne = thePlayer->m_yVelocity;
+	else if (thePlayer == theGJBGL->m_player2) originalVelocityPlayerTwo = thePlayer->m_yVelocity;
+}
+
+static float getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
+	const unsigned int arousal = static_cast<unsigned int>(getViewershipArousalLevelForEpisode(13));
+	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
+	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
+
+	if (arousal != std::numeric_limits<unsigned int>::max() || !goslingShouldStopBreaking) return 0.f;
+
+	if (thePlayer == theGJBGL->m_player1) return originalVelocityPlayerOne;
+	else if (thePlayer == theGJBGL->m_player2) return originalVelocityPlayerTwo;
+	else return 0.f;
+}
+
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 	struct Fields {
 		~Fields() {
 			isRandomizingPlayerOne = false;
 			isRandomizingPlayerTwo = false;
 			forcePassThrough = false;
+			originalVelocityPlayerOne = 0.f;
+			originalVelocityPlayerTwo = 0.f;
 		}
 	};
 
@@ -160,7 +186,8 @@ class $modify(MyPlayLayer, PlayLayer) {
 class $modify(MyPlayerObject, PlayerObject) {
 	struct Fields {
 		~Fields() {
-			originalVelocity = 0.f;
+			originalVelocityPlayerOne = 0.f;
+			originalVelocityPlayerTwo = 0.f;
 		}
 	};
 	void loadFromCheckpoint(PlayerCheckpoint* object) {
@@ -170,18 +197,18 @@ class $modify(MyPlayerObject, PlayerObject) {
 	}
 	void toggleBirdMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::UfoPortal, enable)) {
-			if (m_isBird) originalVelocity = this->m_yVelocity;
+			if (m_isBird) setVelocity(this, m_gameLayer);
 			PlayerObject::toggleBirdMode(enable, noEffects);
-			if (m_isBird) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::UfoPortal));
+			if (m_isBird) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::UfoPortal));
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isBird) originalVelocity = this->m_yVelocity;
+				if (m_isBird) setVelocity(this, m_gameLayer);
 				PlayerObject::toggleBirdMode(true, noEffects);
-				if (m_isBird) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::UfoPortal));
+				if (m_isBird) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::UfoPortal));
 				break;
 			case 0:
 				PlayerObject::toggleBirdMode(false, noEffects);
@@ -209,18 +236,18 @@ class $modify(MyPlayerObject, PlayerObject) {
 	}
 	void toggleDartMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::WavePortal, enable)) {
-			if (m_isDart) originalVelocity = this->m_yVelocity;
+			if (m_isDart) setVelocity(this, m_gameLayer);
 			PlayerObject::toggleDartMode(enable, noEffects);
-			if (m_isDart) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::WavePortal));
+			if (m_isDart) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::WavePortal));
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isDart) originalVelocity = this->m_yVelocity;
+				if (m_isDart) setVelocity(this, m_gameLayer);
 				PlayerObject::toggleDartMode(true, noEffects);
-				if (m_isDart) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::WavePortal));
+				if (m_isDart) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::WavePortal));
 				break;
 			case 0:
 				PlayerObject::toggleDartMode(false, noEffects);
@@ -248,18 +275,18 @@ class $modify(MyPlayerObject, PlayerObject) {
 	}
 	void toggleFlyMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::ShipPortal, enable)) {
-			if (m_isShip) originalVelocity = this->m_yVelocity;
+			if (m_isShip) setVelocity(this, m_gameLayer);
 			PlayerObject::toggleFlyMode(enable, noEffects);
-			if (m_isShip) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::ShipPortal));
+			if (m_isShip) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::ShipPortal));
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isShip) originalVelocity = this->m_yVelocity;
+				if (m_isShip) setVelocity(this, m_gameLayer);
 				PlayerObject::toggleFlyMode(true, noEffects);
-				if (m_isShip) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::ShipPortal));
+				if (m_isShip) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::ShipPortal));
 				break;
 			case 0:
 				PlayerObject::toggleFlyMode(false, noEffects);
@@ -287,18 +314,18 @@ class $modify(MyPlayerObject, PlayerObject) {
 	}
 	void toggleRobotMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::RobotPortal, enable)) {
-			if (m_isRobot) originalVelocity = this->m_yVelocity;
+			if (m_isRobot) setVelocity(this, m_gameLayer);
 			PlayerObject::toggleRobotMode(enable, noEffects);
-			if (m_isRobot) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::RobotPortal));
+			if (m_isRobot) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::RobotPortal));
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isRobot) originalVelocity = this->m_yVelocity;
+				if (m_isRobot) setVelocity(this, m_gameLayer);
 				PlayerObject::toggleRobotMode(true, noEffects);
-				if (m_isRobot) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::RobotPortal));
+				if (m_isRobot) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::RobotPortal));
 				break;
 			case 0:
 				PlayerObject::toggleRobotMode(false, noEffects);
@@ -326,18 +353,18 @@ class $modify(MyPlayerObject, PlayerObject) {
 	}
 	void toggleRollMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::BallPortal, enable)) {
-			if (m_isBall) originalVelocity = this->m_yVelocity;
+			if (m_isBall) setVelocity(this, m_gameLayer);
 			PlayerObject::toggleRollMode(enable, noEffects);
-			if (m_isBall) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::BallPortal));
+			if (m_isBall) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::BallPortal));
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isBall) originalVelocity = this->m_yVelocity;
+				if (m_isBall) setVelocity(this, m_gameLayer);
 				PlayerObject::toggleRollMode(true, noEffects);
-				if (m_isBall) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::BallPortal));
+				if (m_isBall) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::BallPortal));
 				break;
 			case 0:
 				PlayerObject::toggleRollMode(false, noEffects);
@@ -365,18 +392,18 @@ class $modify(MyPlayerObject, PlayerObject) {
 	}
 	void toggleSpiderMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::SpiderPortal, enable)) {
-			if (m_isSpider) originalVelocity = this->m_yVelocity;
+			if (m_isSpider) setVelocity(this, m_gameLayer);
 			PlayerObject::toggleSpiderMode(enable, noEffects);
-			if (m_isSpider) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::SpiderPortal));
+			if (m_isSpider) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::SpiderPortal));
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isSpider) originalVelocity = this->m_yVelocity;
+				if (m_isSpider) setVelocity(this, m_gameLayer);
 				PlayerObject::toggleSpiderMode(true, noEffects);
-				if (m_isSpider) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::SpiderPortal));
+				if (m_isSpider) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::SpiderPortal));
 				break;
 			case 0:
 				PlayerObject::toggleSpiderMode(false, noEffects);
@@ -404,18 +431,18 @@ class $modify(MyPlayerObject, PlayerObject) {
 	}
 	void toggleSwingMode(bool enable, bool noEffects) {
 		if (shouldPassThrough(this, m_gameLayer, GameObjectType::SwingPortal, enable)) {
-			if (m_isSwing) originalVelocity = this->m_yVelocity;
+			if (m_isSwing) setVelocity(this, m_gameLayer);
 			PlayerObject::toggleSwingMode(enable, noEffects);
-			if (m_isSwing) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::SwingPortal));
+			if (m_isSwing) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::SwingPortal));
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isSwing) originalVelocity = this->m_yVelocity;
+				if (m_isSwing) setVelocity(this, m_gameLayer);
 				PlayerObject::toggleSwingMode(true, noEffects);
-				if (m_isSwing) this->setYVelocity(originalVelocity, static_cast<int>(GameObjectType::SwingPortal));
+				if (m_isSwing) this->setYVelocity(getVelocity(this, m_gameLayer), static_cast<int>(GameObjectType::SwingPortal));
 				break;
 			case 0:
 				PlayerObject::toggleSwingMode(false, noEffects);
