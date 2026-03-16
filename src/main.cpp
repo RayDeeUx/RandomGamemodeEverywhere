@@ -68,7 +68,7 @@ static bool isSameGamemode(PlayerObject* thePlayer, GameObjectType mode, bool en
 
 static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL, GameObjectType mode, bool enablePortal) {
 	bool ret = false;
-	bool isSameGamemode = false;
+	bool isSameGamemodeVar = false;
 
 	const bool arousal = getViewershipArousalLevelForEpisode(1) == std::numeric_limits<int>::max();
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
@@ -80,13 +80,13 @@ static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL
 	else if (theGJBGL->m_isEditor && dontEnableInEditor) ret = true;
 	else if (isSameGamemode(thePlayer, mode, enablePortal)) {
 		ret = true;
-		isSameGamemode = true;
+		isSameGamemodeVar = true;
 	}
 
 	else if (thePlayer == theGJBGL->m_player1 && isRandomizingPlayerOne) ret = true;
 	else if (thePlayer == theGJBGL->m_player2 && isRandomizingPlayerTwo) ret = true;
 
-	if (!isSameGamemode && !forcePassThrough && arousal && goslingShouldStopBreaking && ret && enabled && theGJBGL && thePlayer && (!theGJBGL->m_isEditor || !dontEnableInEditor)) {
+	if (!isSameGamemodeVar && !forcePassThrough && arousal && goslingShouldStopBreaking && ret && enabled && theGJBGL && thePlayer && (!theGJBGL->m_isEditor || !dontEnableInEditor)) {
 		if (!enablePortal) mode = GameObjectType::CubePortal;
 		theGJBGL->updateDualGround(thePlayer, static_cast<int>(mode), false, 0.5f);
 		const bool shouldRandomize = ((!theGJBGL->m_isEditor && !static_cast<PlayLayer*>(theGJBGL)->m_isPracticeMode) || theGJBGL->m_isEditor);
