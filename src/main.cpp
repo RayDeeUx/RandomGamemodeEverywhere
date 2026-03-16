@@ -167,7 +167,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isBird) const float originalVelocity = this->m_yVelocity;
+				float originalVelocity = 0.f;
+				if (m_isBird) originalVelocity = this->m_yVelocity;
 				PlayerObject::toggleBirdMode(true, noEffects);
 				if (m_isBird) this->setYVelocity(originalVelocity);
 				break;
@@ -201,7 +202,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isDart) const float originalVelocity = this->m_yVelocity;
+				float originalVelocity = 0.f;
+				if (m_isDart) originalVelocity = this->m_yVelocity;
 				PlayerObject::toggleDartMode(true, noEffects);
 				if (m_isDart) this->setYVelocity(originalVelocity);
 				break;
@@ -235,7 +237,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isShip) const float originalVelocity = this->m_yVelocity;
+				float originalVelocity = 0.f;
+				if (m_isShip) originalVelocity = this->m_yVelocity;
 				PlayerObject::toggleFlyMode(true, noEffects);
 				if (m_isShip) this->setYVelocity(originalVelocity);
 				break;
@@ -269,7 +272,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isRobot) const float originalVelocity = this->m_yVelocity;
+				float originalVelocity = 0.f;
+				if (m_isRobot) originalVelocity = this->m_yVelocity;
 				PlayerObject::toggleRobotMode(true, noEffects);
 				if (m_isRobot) this->setYVelocity(originalVelocity);
 				break;
@@ -303,7 +307,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isBall) const float originalVelocity = this->m_yVelocity;
+				float originalVelocity = 0.f;
+				if (m_isBall) originalVelocity = this->m_yVelocity;
 				PlayerObject::toggleRollMode(true, noEffects);
 				if (m_isBall) this->setYVelocity(originalVelocity);
 				break;
@@ -337,7 +342,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isSpider) const float originalVelocity = this->m_yVelocity;
+				float originalVelocity = 0.f;
+				if (m_isSpider) originalVelocity = this->m_yVelocity;
 				PlayerObject::toggleSpiderMode(true, noEffects);
 				if (m_isSpider) this->setYVelocity(originalVelocity);
 				break;
@@ -371,7 +377,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 		const int r = getRandom(7);
 		switch (r) {
 			default:
-				if (m_isSwing) const float originalVelocity = this->m_yVelocity;
+				float originalVelocity = 0.f;
+				if (m_isSwing) originalVelocity = this->m_yVelocity;
 				PlayerObject::toggleSwingMode(true, noEffects);
 				if (m_isSwing) this->setYVelocity(originalVelocity);
 				break;
