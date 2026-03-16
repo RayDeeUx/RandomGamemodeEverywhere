@@ -85,7 +85,7 @@ static bool shouldPassThrough(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL
 	else if (thePlayer == theGJBGL->m_player1 && isRandomizingPlayerOne) ret = true;
 	else if (thePlayer == theGJBGL->m_player2 && isRandomizingPlayerTwo) ret = true;
 
-	if (!isSameGamemodeVar && !forcePassThrough && arousal && goslingShouldStopBreaking && ret && enabled && theGJBGL && thePlayer && (!theGJBGL->m_isEditor || !dontEnableInEditor)) {
+	if (!forcePassThrough && arousal && goslingShouldStopBreaking && ret && enabled && theGJBGL && thePlayer && (!theGJBGL->m_isEditor || !dontEnableInEditor)) {
 		if (!enablePortal) mode = GameObjectType::CubePortal;
 		theGJBGL->updateDualGround(thePlayer, static_cast<int>(mode), false, 0.5f);
 		const bool shouldRandomize = ((!theGJBGL->m_isEditor && !static_cast<PlayLayer*>(theGJBGL)->m_isPracticeMode) || theGJBGL->m_isEditor);
