@@ -38,7 +38,7 @@ static const bool thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS5
 	return true;
 }
 
-// $on_mod(Loaded) { Mod::get()->setLoggingEnabled(false); }
+$on_mod(Loaded) { Mod::get()->setLoggingEnabled(false); }
 
 $on_game(Loaded) {
 	enabled = Mod::get()->getSettingValue<bool>("enabled");
@@ -208,8 +208,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
-		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
+		int r = getRandom(7);
+		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isBird && enabled) setVelocity(this, m_gameLayer);
@@ -248,8 +248,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
-		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
+		int r = getRandom(7);
+		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isDart && enabled) setVelocity(this, m_gameLayer);
@@ -288,8 +288,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
-		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
+		int r = getRandom(7);
+		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isShip && enabled) setVelocity(this, m_gameLayer);
@@ -328,8 +328,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
-		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
+		int r = getRandom(7);
+		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isRobot && enabled) setVelocity(this, m_gameLayer);
@@ -368,8 +368,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
-		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
+		int r = getRandom(7);
+		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isBall && enabled) setVelocity(this, m_gameLayer);
@@ -408,8 +408,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
-		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
+		int r = getRandom(7);
+		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isSpider && enabled) setVelocity(this, m_gameLayer);
@@ -448,8 +448,8 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
-		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
+		int r = getRandom(7);
+		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isSwing && enabled) setVelocity(this, m_gameLayer);
