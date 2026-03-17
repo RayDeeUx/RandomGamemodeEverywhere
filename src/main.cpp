@@ -17,7 +17,6 @@ bool randomizePlayerMirror = false;
 bool dontRandomizePlayerTwoWhenEnteringDual = true;
 bool dontRandomizeInitialGamemode = true;
 bool forceFreeMode = false;
-bool alwaysRandomizeIntoDifferentGamemode = false;
 
 double originalVelocityPlayerOne = 0.f;
 double originalVelocityPlayerTwo = 0.f;
@@ -49,7 +48,6 @@ $on_game(Loaded) {
 	randomizePlayerMirror = Mod::get()->getSettingValue<bool>("randomizePlayerMirror");
 	dontRandomizePlayerTwoWhenEnteringDual = Mod::get()->getSettingValue<bool>("dontRandomizePlayerTwoWhenEnteringDual");
 	dontRandomizeInitialGamemode = Mod::get()->getSettingValue<bool>("dontRandomizeInitialGamemode");
-	alwaysRandomizeIntoDifferentGamemode = Mod::get()->getSettingValue<bool>("alwaysRandomizeIntoDifferentGamemode");
 
 	listenForSettingChanges<bool>("enabled", [](const bool v) { enabled = v; });
 	listenForSettingChanges<bool>("forceFreeMode", [](const bool v) { forceFreeMode = v; });
@@ -59,7 +57,6 @@ $on_game(Loaded) {
 	listenForSettingChanges<bool>("randomizePlayerMirror", [](const bool v) { randomizePlayerMirror = v; });
 	listenForSettingChanges<bool>("dontRandomizePlayerTwoWhenEnteringDual", [](const bool v) { dontRandomizePlayerTwoWhenEnteringDual = v; });
 	listenForSettingChanges<bool>("dontRandomizeInitialGamemode", [](const bool v) { dontRandomizeInitialGamemode = v; });
-	listenForSettingChanges<bool>("alwaysRandomizeIntoDifferentGamemode", [](const bool v) { alwaysRandomizeIntoDifferentGamemode = v; });
 }
 
 static bool isSameGamemode(PlayerObject* thePlayer, GameObjectType mode, bool enablePortal) {
@@ -209,7 +206,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		int r = getRandom(7);
-		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isBird && enabled) setVelocity(this, m_gameLayer);
@@ -249,7 +245,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		int r = getRandom(7);
-		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isDart && enabled) setVelocity(this, m_gameLayer);
@@ -289,7 +284,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		int r = getRandom(7);
-		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isShip && enabled) setVelocity(this, m_gameLayer);
@@ -329,7 +323,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		int r = getRandom(7);
-		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isRobot && enabled) setVelocity(this, m_gameLayer);
@@ -369,7 +362,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		int r = getRandom(7);
-		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isBall && enabled) setVelocity(this, m_gameLayer);
@@ -409,7 +401,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		int r = getRandom(7);
-		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isSpider && enabled) setVelocity(this, m_gameLayer);
@@ -449,7 +440,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		int r = getRandom(7);
-		while (alwaysRandomizeIntoDifferentGamemode && r > 6) r = getRandom(7);
 		switch (r) {
 			default:
 				if (m_isSwing && enabled) setVelocity(this, m_gameLayer);
