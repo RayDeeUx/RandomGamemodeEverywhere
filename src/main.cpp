@@ -38,7 +38,7 @@ static const bool thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS5
 	return true;
 }
 
-$on_mod(Loaded) { Mod::get()->setLoggingEnabled(false); }
+// $on_mod(Loaded) { Mod::get()->setLoggingEnabled(false); }
 
 $on_game(Loaded) {
 	enabled = Mod::get()->getSettingValue<bool>("enabled");
@@ -209,7 +209,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
-		log::info("r: {}", r);
+		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
 				if (m_isBird && enabled) setVelocity(this, m_gameLayer);
