@@ -208,7 +208,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
 		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
@@ -248,7 +248,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
 		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
@@ -288,7 +288,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
 		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
@@ -328,7 +328,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
 		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
@@ -368,7 +368,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
 		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
@@ -408,7 +408,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
 		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
@@ -448,7 +448,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6, 1) : getRandom(7);
 		log::info("r: {} | alwaysRandomizeIntoDifferentGamemode: {}", r, alwaysRandomizeIntoDifferentGamemode);
 		switch (r) {
 			default:
