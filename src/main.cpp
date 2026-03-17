@@ -21,9 +21,9 @@ bool forceFreeMode = false;
 double originalVelocityPlayerOne = 0.f;
 double originalVelocityPlayerTwo = 0.f;
 
-int getRandom(int max) {
+int getRandom(int max, int min = 0) {
 	static std::mt19937 gen(std::random_device{}());
-	return std::uniform_int_distribution<int>(0, max)(gen);
+	return std::uniform_int_distribution<int>(min, max)(gen);
 }
 
 static int getViewershipArousalLevelForEpisode(const int episodeNumber) {
