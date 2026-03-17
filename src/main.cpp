@@ -49,6 +49,7 @@ $on_game(Loaded) {
 	randomizePlayerMirror = Mod::get()->getSettingValue<bool>("randomizePlayerMirror");
 	dontRandomizePlayerTwoWhenEnteringDual = Mod::get()->getSettingValue<bool>("dontRandomizePlayerTwoWhenEnteringDual");
 	dontRandomizeInitialGamemode = Mod::get()->getSettingValue<bool>("dontRandomizeInitialGamemode");
+	alwaysRandomizeIntoDifferentGamemode = Mod::get()->getSettingValue<bool>("alwaysRandomizeIntoDifferentGamemode");
 
 	listenForSettingChanges<bool>("enabled", [](const bool v) { enabled = v; });
 	listenForSettingChanges<bool>("forceFreeMode", [](const bool v) { forceFreeMode = v; });
@@ -58,6 +59,7 @@ $on_game(Loaded) {
 	listenForSettingChanges<bool>("randomizePlayerMirror", [](const bool v) { randomizePlayerMirror = v; });
 	listenForSettingChanges<bool>("dontRandomizePlayerTwoWhenEnteringDual", [](const bool v) { dontRandomizePlayerTwoWhenEnteringDual = v; });
 	listenForSettingChanges<bool>("dontRandomizeInitialGamemode", [](const bool v) { dontRandomizeInitialGamemode = v; });
+	listenForSettingChanges<bool>("alwaysRandomizeIntoDifferentGamemode", [](const bool v) { alwaysRandomizeIntoDifferentGamemode = v; });
 }
 
 static bool isSameGamemode(PlayerObject* thePlayer, GameObjectType mode, bool enablePortal) {
