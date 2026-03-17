@@ -38,7 +38,7 @@
 			"default": false
 		},
 		"forceFreeMode": {
-			"name": "Force Free Mode",
+			"name": "Force Free Mode When Randomizing Gamemodes",
 			"type": "bool",
 			"default": true
 		},
