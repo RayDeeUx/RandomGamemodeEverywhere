@@ -171,10 +171,10 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 	void toggleDualMode(GameObject* object, bool dual, PlayerObject* player, bool noEffects) {
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
-		if (forceFreeMode) theGJBGL->m_gameState.m_unkBool8 = true;
+		if (forceFreeMode) m_gameState.m_unkBool8 = true;
 		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
-		if (forceFreeMode) theGJBGL->m_gameState.m_unkBool8 = true;
+		if (forceFreeMode) m_gameState.m_unkBool8 = true;
 	}
 };
 
