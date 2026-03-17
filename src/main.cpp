@@ -209,6 +209,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		log::info("r: {}", r);
 		switch (r) {
 			default:
 				if (m_isBird && enabled) setVelocity(this, m_gameLayer);
@@ -248,6 +249,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		log::info("r: {}", r);
 		switch (r) {
 			default:
 				if (m_isDart && enabled) setVelocity(this, m_gameLayer);
@@ -287,6 +289,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		log::info("r: {}", r);
 		switch (r) {
 			default:
 				if (m_isShip && enabled) setVelocity(this, m_gameLayer);
@@ -326,6 +329,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		log::info("r: {}", r);
 		switch (r) {
 			default:
 				if (m_isRobot && enabled) setVelocity(this, m_gameLayer);
@@ -365,6 +369,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		log::info("r: {}", r);
 		switch (r) {
 			default:
 				if (m_isBall && enabled) setVelocity(this, m_gameLayer);
@@ -404,6 +409,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		log::info("r: {}", r);
 		switch (r) {
 			default:
 				if (m_isSpider && enabled) setVelocity(this, m_gameLayer);
@@ -443,6 +449,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 		}
 		setRandomizing(this, m_gameLayer, true);
 		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
+		log::info("r: {}", r);
 		switch (r) {
 			default:
 				if (m_isSwing && enabled) setVelocity(this, m_gameLayer);
