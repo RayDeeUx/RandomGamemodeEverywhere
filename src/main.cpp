@@ -17,13 +17,14 @@ bool randomizePlayerMirror = false;
 bool dontRandomizePlayerTwoWhenEnteringDual = true;
 bool dontRandomizeInitialGamemode = true;
 bool forceFreeMode = false;
+bool alwaysRandomizeIntoDifferentGamemode = false;
 
-float originalVelocityPlayerOne = 0.f;
-float originalVelocityPlayerTwo = 0.f;
+double originalVelocityPlayerOne = 0.f;
+double originalVelocityPlayerTwo = 0.f;
 
-int getRandom(int max) {
+int getRandom(int max, int min = 0) {
 	static std::mt19937 gen(std::random_device{}());
-	return std::uniform_int_distribution<int>(0, max)(gen);
+	return std::uniform_int_distribution<int>(min, max)(gen);
 }
 
 static int getViewershipArousalLevelForEpisode(const int episodeNumber) {
@@ -127,7 +128,7 @@ static void setVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 	else if (thePlayer == theGJBGL->m_player2) originalVelocityPlayerTwo = thePlayer->m_yVelocity;
 }
 
-static float getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
+static double getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 	const unsigned int arousal = static_cast<unsigned int>(getViewershipArousalLevelForEpisode(13));
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
@@ -136,7 +137,7 @@ static float getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 
 	if (thePlayer == theGJBGL->m_player1) return originalVelocityPlayerOne;
 	else if (thePlayer == theGJBGL->m_player2) return originalVelocityPlayerTwo;
-	else return 0.f;
+	else return 0.0;
 }
 
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
@@ -170,8 +171,10 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 	void toggleDualMode(GameObject* object, bool dual, PlayerObject* player, bool noEffects) {
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = true;
+		if (forceFreeMode) theGJBGL->m_gameState.m_unkBool8 = true;
 		GJBaseGameLayer::toggleDualMode(object, dual, player, noEffects);
 		if (dontRandomizePlayerTwoWhenEnteringDual) forcePassThrough = false;
+		if (forceFreeMode) theGJBGL->m_gameState.m_unkBool8 = true;
 	}
 };
 
@@ -203,7 +206,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
 		switch (r) {
 			default:
 				if (m_isBird && enabled) setVelocity(this, m_gameLayer);
@@ -242,7 +245,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
 		switch (r) {
 			default:
 				if (m_isDart && enabled) setVelocity(this, m_gameLayer);
@@ -281,7 +284,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
 		switch (r) {
 			default:
 				if (m_isShip && enabled) setVelocity(this, m_gameLayer);
@@ -320,7 +323,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
 		switch (r) {
 			default:
 				if (m_isRobot && enabled) setVelocity(this, m_gameLayer);
@@ -359,7 +362,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
 		switch (r) {
 			default:
 				if (m_isBall && enabled) setVelocity(this, m_gameLayer);
@@ -398,7 +401,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
 		switch (r) {
 			default:
 				if (m_isSpider && enabled) setVelocity(this, m_gameLayer);
@@ -437,7 +440,7 @@ class $modify(MyPlayerObject, PlayerObject) {
 			return;
 		}
 		setRandomizing(this, m_gameLayer, true);
-		const int r = getRandom(7);
+		const int r = alwaysRandomizeIntoDifferentGamemode ? getRandom(6) : getRandom(7);
 		switch (r) {
 			default:
 				if (m_isSwing && enabled) setVelocity(this, m_gameLayer);

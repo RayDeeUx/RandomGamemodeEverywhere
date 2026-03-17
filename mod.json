@@ -38,7 +38,7 @@
 			"default": false
 		},
 		"forceFreeMode": {
-			"name": "Force Free Mode",
+			"name": "Force Free Mode When Randomizing Gamemodes",
 			"type": "bool",
 			"default": true
 		},
@@ -51,6 +51,11 @@
 			"name": "Don't Randomize Initial Gamemode",
 			"type": "bool",
 			"default": true
+		},
+		"alwaysRandomizeIntoDifferentGamemode": {
+			"name": "Always Randomize Into A Different Gamemode",
+			"type": "bool",
+			"default": false
 		}
 	},
 	"tags": [
