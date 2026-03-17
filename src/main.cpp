@@ -18,8 +18,8 @@ bool dontRandomizePlayerTwoWhenEnteringDual = true;
 bool dontRandomizeInitialGamemode = true;
 bool forceFreeMode = false;
 
-float originalVelocityPlayerOne = 0.f;
-float originalVelocityPlayerTwo = 0.f;
+double originalVelocityPlayerOne = 0.f;
+double originalVelocityPlayerTwo = 0.f;
 
 int getRandom(int max) {
 	static std::mt19937 gen(std::random_device{}());
@@ -127,7 +127,7 @@ static void setVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 	else if (thePlayer == theGJBGL->m_player2) originalVelocityPlayerTwo = thePlayer->m_yVelocity;
 }
 
-static float getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
+static double getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 	const unsigned int arousal = static_cast<unsigned int>(getViewershipArousalLevelForEpisode(13));
 	const bool goslingShouldStopBreaking = thisFunctionReturnsTrueAndItWontBeAsBrokenAsTheSNLCastDuringS51E14WhereTheySomehowBrokeMoreOftenThanYourAverageWindows11UpdateWhichIsKindOfANewLowInMyOpinion();
 	log::info("arousal: {}, goslingShouldStopBreaking: {}", arousal, goslingShouldStopBreaking);
@@ -136,7 +136,7 @@ static float getVelocity(PlayerObject* thePlayer, GJBaseGameLayer* theGJBGL) {
 
 	if (thePlayer == theGJBGL->m_player1) return originalVelocityPlayerOne;
 	else if (thePlayer == theGJBGL->m_player2) return originalVelocityPlayerTwo;
-	else return 0.f;
+	else return 0.0;
 }
 
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
