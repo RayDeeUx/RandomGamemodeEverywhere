@@ -44,19 +44,19 @@ $on_game(Loaded) {
 	forceFreeMode = Mod::get()->getSettingValue<bool>("forceFreeMode");
 	dontEnableInEditor = Mod::get()->getSettingValue<bool>("dontEnableInEditor");
 	randomizePlayerSize = Mod::get()->getSettingValue<bool>("randomizePlayerSize");
-	randomizePlayerGravity = Mod::get()->getSettingValue<bool>("randomizePlayerGravity");
 	randomizePlayerMirror = Mod::get()->getSettingValue<bool>("randomizePlayerMirror");
-	dontRandomizePlayerTwoWhenEnteringDual = Mod::get()->getSettingValue<bool>("dontRandomizePlayerTwoWhenEnteringDual");
+	randomizePlayerGravity = Mod::get()->getSettingValue<bool>("randomizePlayerGravity");
 	dontRandomizeInitialGamemode = Mod::get()->getSettingValue<bool>("dontRandomizeInitialGamemode");
+	dontRandomizePlayerTwoWhenEnteringDual = Mod::get()->getSettingValue<bool>("dontRandomizePlayerTwoWhenEnteringDual");
 
 	listenForSettingChanges<bool>("enabled", [](const bool v) { enabled = v; });
 	listenForSettingChanges<bool>("forceFreeMode", [](const bool v) { forceFreeMode = v; });
 	listenForSettingChanges<bool>("dontEnableInEditor", [](const bool v) { dontEnableInEditor = v; });
 	listenForSettingChanges<bool>("randomizePlayerSize", [](const bool v) { randomizePlayerSize = v; });
-	listenForSettingChanges<bool>("randomizePlayerGravity", [](const bool v) { randomizePlayerGravity = v; });
 	listenForSettingChanges<bool>("randomizePlayerMirror", [](const bool v) { randomizePlayerMirror = v; });
-	listenForSettingChanges<bool>("dontRandomizePlayerTwoWhenEnteringDual", [](const bool v) { dontRandomizePlayerTwoWhenEnteringDual = v; });
+	listenForSettingChanges<bool>("randomizePlayerGravity", [](const bool v) { randomizePlayerGravity = v; });
 	listenForSettingChanges<bool>("dontRandomizeInitialGamemode", [](const bool v) { dontRandomizeInitialGamemode = v; });
+	listenForSettingChanges<bool>("dontRandomizePlayerTwoWhenEnteringDual", [](const bool v) { dontRandomizePlayerTwoWhenEnteringDual = v; });
 }
 
 static bool isSameGamemode(PlayerObject* thePlayer, GameObjectType mode, bool enablePortal) {
